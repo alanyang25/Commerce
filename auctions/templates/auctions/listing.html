@@ -1,0 +1,161 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <div class="card-deck mb-3 text-center">
+            <div class="col-lg-3 mt-4">
+                {% if listing.image_link %}
+                    <img src="{{ listing.image_link }}" width="270" alt="pic">
+                {% else %}
+                    <img src="https://www.cversijp.nl/wp-content/uploads/2020/03/not_found.png" height="200" alt="nopic">
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <h3>{{ listing.title }}</h1>
+                <div class="card mb-3">
+                    <div class="card-header p-2">
+                        <h4 class="my-0 text-secondary">Current Price</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1>${{ listing.current_price }}</h1>
+                        <!-- check and alert the bid price -->
+                        {% if pass %}
+                            <div class="alert alert-success alert-dismissible fade show p-1" role="alert">
+                                Bid made successfully!
+                                <button type="button" class="close p-1" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% elif pass is None %}
+
+                        {% else %}
+                            <div class="alert alert-danger alert-dismissible fade show p-1" role="alert">
+                                Invalid bid. Please try again.
+                                <button type="button" class="close p-1" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endif %}
+                        <!-- bid -->
+                        {% if not closed %}
+                            <form action="" method="POST" >
+                                {% csrf_token %}
+                                <div class="form-group" >
+                                    {{ bid }}
+                                    <span>[Enter more than ${{ listing.current_price }} to bid]</span>
+                                    {% if user.is_authenticated %}
+                                        <button class="btn btn-lg btn-block btn-warning mt-3 p-1" type="submit" name="submitb">
+                                            Place bid
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </form>
+                        {% endif %}
+
+                        {% if closed %}
+                            <div class="alert alert-warning alert-dismissible fade show p-1" role="alert">
+                                This bid is closed
+                                </button>
+                            </div>
+                            {% if winner %}
+                                <div class="alert alert-success alert-dismissible fade show p-1" role="alert">
+                                    You won this auction!
+                                    </button>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        <!-- watchlist -->
+                        {% if user.is_authenticated %}
+                            <form>
+                                {% if watched is True %}
+                                    {% if close_button %}
+                                        <div class="row mx-0 d-flex justify-content-between">
+                                            <button class="btn btn-lg btn-block btn-outline-danger mt-0 p-1 col-lg-8" type="submit" name="remove">
+                                                <i class="far fa-heart"></i>
+                                                Remove from watchlist
+                                            </button>
+                                            <button class="btn btn-lg btn-block btn-danger mt-0 p-1 col-lg-3" type="submit" name="close">
+                                                Close bid
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <button class="btn btn-lg btn-block btn-outline-danger mt-3 p-1" type="submit" name="remove">
+                                            <i class="far fa-heart"></i>
+                                            Remove from watchlist
+                                        </button>
+                                    {% endif %}
+                                {% else %}
+                                    {% if close_button %}
+                                        <div class="row mx-0 d-flex justify-content-between">
+                                            <button class="btn btn-lg btn-block btn-outline-primary mt-0 p-1 col-lg-8" type="submit" name="add">
+                                                <i class="far fa-heart"></i>
+                                                Add to watchlist
+                                            </button>
+                                            <button class="btn btn-lg btn-block btn-danger mt-0 p-1 col-lg-3" type="submit" name="close">
+                                                Close bid
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <button class="btn btn-lg btn-block btn-outline-primary mt-3 p-1" type="submit" name="add">
+                                            <i class="far fa-heart"></i>
+                                            Add to watchlist
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="text-lg-left px-md-3">
+                    <h6>Description:</h6>
+                    <p>{{ listing.description }}</p>
+                </div>
+                <div class="text-lg-left px-md-3">
+                    <h6>Details:</h6>
+                    <table class="table">
+                        <tr>
+                            <td>Available since</td>
+                            <td>{{ listing.created_on }}</td>
+                        </tr>
+                        <tr>
+                            <td>Listed by</td>
+                            <td>{{ listing.created_by }}</td>
+                        </tr>
+                        <tr>
+                            <td>Category</td>
+                            <td><a href="{% url 'category_listing' listing.category %}">{{ listing.category }}</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            {% if user.is_authenticated %}
+                <div class="col-lg-3">
+                    <h4>Create a comment</h4>
+                    <form action="" method="POST" >
+                        {% csrf_token %}
+                        <div class="form-group" >
+                            {{ comment }}
+                            <button class="btn btn-lg btn-block btn-light mt-3 p-1" type="submit" name="submitc">
+                                Submit comment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+        <div>
+            <h2>Comments</h2>
+            <p>{{ comments_count }} comment(s)</p>
+            {% for comment in comments %}
+                <div class="border-top">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                        <h3>{{ comment.commenter }}</h3>
+                        <span class="font-weight-light">{{ comment.comment_time }}</span>
+                    </div>
+                    <p class="font-weight-bold">{{ comment.comment_title }}</p>
+                    <p>{{ comment.comment_content }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

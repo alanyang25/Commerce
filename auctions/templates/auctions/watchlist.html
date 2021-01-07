@@ -1,0 +1,38 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>MY WATCHLIST</h2>
+
+    <div class="row">
+        {% for listing in listings %}
+            <div class="col-lg-3 mt-2">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        {% if listing.image_link %}
+                            <a href="{% url 'listing' listing.id%}"><img src="{{ listing.image_link }}" height="230" alt="pic"></a>
+                        {% else %}
+                            <img src="https://www.cversijp.nl/wp-content/uploads/2020/03/not_found.png" height="150" alt="nopic">
+                        {% endif %}
+                        <div>
+                            <a href="{% url 'listing' listing.id%}">{{ listing.title }}</a>
+                            {% if listing.published is False %}
+                                <p class="badge bg-warning text-dark">closed</p>
+                            {% endif %}
+                        </div>
+                        <div class="border-top pt-2">
+                            <div class="row justify-content-start pl-5">
+                                Currently: ${{ listing.current_price }}
+                            </div>
+                            <div class="row justify-content-start pl-5">
+                                Category: {{ listing.category }}
+                            </div>
+                            <div class="font-weight-light row justify-content-start pl-5">
+                                Created on: {{ listing.created_on }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div > 
+        {% endfor %}
+    </div>
+{% endblock %}
