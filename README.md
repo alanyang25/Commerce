@@ -15,7 +15,7 @@ Commerce是線上課程"CS50’s Web Programming with Python and JavaScript"的�
 **後端**
 - 語言: 
 	* Python
-- 框架/Libraries:
+- 框架:
  	* [Django](https://www.djangoproject.com/)
  
 **資料庫**
