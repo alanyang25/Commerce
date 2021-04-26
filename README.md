@@ -6,7 +6,6 @@ Commerce是線上課程"CS50’s Web Programming with Python and JavaScript"的�
 ## 語言
 **前端**
 - 語言: 
- 	* JavaScript
 	* HTML
 	* CSS
 - Libraries:
